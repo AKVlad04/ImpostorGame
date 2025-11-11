@@ -1,0 +1,138 @@
+body {
+  background-color: #2c2c2c;
+  font-family: Arial, sans-serif;
+}
+
+.lobby {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin: 50px;
+}
+
+.lobby_cards {
+  background-color: #333;
+  color: #aaa;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+  flex: 1 1 45%;
+}
+
+.lobby_cards.full-width {
+  flex: 1 1 100%;
+}
+
+.lobby_cards:hover {
+  background-color: #444;
+}
+
+.lobby_cards h1 {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.lobby_cards img {
+  height: 100px;
+  width: 100px;
+  background-color: #2c2c2c;
+  border-radius: 25px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #333;
+  color: #aaa;
+  padding: 40px 20px 20px 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 400px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px 10px;
+  background: none;
+  border: none;
+  color: #aaa;
+}
+
+.player-count {
+  display: block;           /* apare pe rând separat între imagine și text */
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  margin-top: 30px;
+}
+
+/* Lista de jucători */
+.players-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+.player-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #444;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  color: #fff;
+}
+
+/* Buton ștergere */
+.delete-btn {
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Input adăugare jucător */
+.add-player-input {
+  padding: 8px;
+  width: 60%;
+  margin-right: 15px;
+  border-radius: 5px;
+  border: none;
+}
+
+/* Buton Add Player */
+.add-player-btn {
+  padding: 8px 39px;
+  border-radius: 5px;
+  border: none;
+  background-color: #2ecc71;
+  color: white;
+  cursor: pointer;
+}
+
+.add-player-btn:hover {
+  background-color: #27ae60;
+}
