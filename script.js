@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // --- ELEMENTE DIN LOBBY ---
   const playersCard = document.getElementById('playersCard');
   const impostorCard = document.getElementById('impostorCard');
   const categoriiCard = document.getElementById('categoriiCard');
@@ -9,19 +10,59 @@ document.addEventListener('DOMContentLoaded', () => {
   const impostorCountSpan = document.querySelector('#impostorCard .impostor-count');
   const startGameBtn = document.getElementById("startGameBtn");
   const gameArea = document.getElementById("gameArea");
+  const startSection = document.getElementById("startSection"); 
 
+  // --- ELEMENTE DIN PAGINA REVEAL ---
+  const revealView = document.getElementById('revealView');
+  const revealPlayerName = document.getElementById('revealPlayerName');
+  const revealCategory = document.getElementById('revealCategory');
+  const revealBox = document.getElementById('revealBox');
+  const revealContent = document.getElementById('revealContent');
+  const revealPrompt = document.getElementById('revealPrompt');
+  const revealConfirmBtn = document.getElementById('revealConfirmBtn');
+
+  // --- ELEMENTE BUTON BACK ---
+  const backButtonContainer = document.getElementById('backButtonContainer');
+  const backToLobbyBtn = document.getElementById('backToLobbyBtn');
+
+  // --- ELEMENTE ECRAN FINAL ---
+  const endGameView = document.getElementById('endGameView');
+  const startingPlayerText = document.getElementById('startingPlayerText');
+  const revealImpostorBtn = document.getElementById('revealImpostorBtn');
+  const resultsArea = document.getElementById('resultsArea');
+  const impostorResult = document.getElementById('impostorResult');
+  const wordResult = document.getElementById('wordResult');
+  const playAgainBtn = document.getElementById('playAgainBtn');
+
+
+  // --- STAREA JOCULUI ---
   let players = ['Player 1', 'Player 2', 'Player 3'];
   let impostors = 1;
 
+  // Variabile pentru jocul curent
+  let currentGamePlayers = []; 
+  let currentGameWord = '';
+  let currentGameCategory = '';
+  let activePlayerBox = null; 
+  let viewedPlayerCount = 0; // NOU: Contor pentru jucatorii care au vazut rolul
+
+  // --- BAZA DE DATE ---
   const database = {
-    Animale: ["leu","tigru","vulpe","urs","pisică","câine"],
-    Mâncare: ["pizza","burger","supa","paste","cartofi"],
-    Țări: ["România","Italia","Germania","Franța","Spania"],
-    Sporturi: ["fotbal","baschet","tenis","volei","înot"],
-    Culori: ["roșu","albastru","verde","galben","mov"],
-    Obiecte: ["telefon","masă","scaun","TV","pix"]
+    Mancare: ["pizza","burger","supă","paste","cartofi","orez","friptură","pui","salată","pește","omletă","sandwich","hotdog","kebab","sushi","tacos","ciorbă","tort","prăjitură","înghețată","ciocolată","pâine","lapte","brânză","iaurt","măr","banană","portocală","struguri","cartofi prăjiți","piure","clătite","covrig"],
+    Bauturi: ["apă","suc de portocale","suc de mere","cola","pepsi","fanta","sprite","ceai verde","limonadă","milkshake","smoothie","lapte","cafea","capuccino","latte","mocha","espresso","frappé","ciocolată caldă","energizant","apă minerală","sirop","nectar","fresh de portocale"],
+    Obiecte: ["telefon","masă","scaun","TV","pix","laptop","carte","pat","lampă","cheie","geamantan","cană","lingură","furculiță","cuțit","ghiozdan","perie","mouse","tastatură","monitor","ceas","umbrelă","tricou","șapcă","ciocan","cutie","creion"],
+    Sporturi: ["fotbal","baschet","tenis","volei","înot","alergare","ciclism","box","karate","schi","snowboard","gimnastică","golf","ping-pong","badminton","handbal","patinaj","surf","skateboarding"],
+    Locatii: ["parc","școală","spital","mall","plajă","hotel","restaurant","cafenea","cinema","muzeu","gară","aeroport","stadion","bibliotecă","birou","pădure","munte","piscină","stradă","piață"],
+    Tari: ["România","Italia","Germania","Franța","Spania","Grecia","Turcia","SUA","Canada","Brazilia","Marea Britanie","Japonia","China","Australia","Rusia","Mexic","Argentina","Egipt"],
+    Profesii: ["doctor","profesor","inginer","mecanic","polițist","pompier","bucătar","chelner","șofer","pilot","dentist","arhitect","electrician","tâmplar","croitor","vânzător","casier","fermier","programator","designer","fotograf","videograf","avocat","judecător","antrenor","sportiv","muzician","cântăreț","actor","jurnalist","medic veterinar","psiholog","instalator","zugrav","constructor","curier","manager","contabil"],
+    Animale: ["leu","tigru","vulpe","urs","pisică","câine","elefant","girafă","zebră","lup","cerb","iepure","veveriță","bufniță","vultur","papagal","găină","rață","delfin","rechin","balenă","broască","cal","măgar","pinguin","crocodil","șarpe","broască țestoasă","vacă","porc","oaie","capră","albină","furnică","fluture","păianjen"],
+    Culori: ["roșu","albastru","verde","galben","mov","portocaliu","negru","alb","gri","maro"],
+    Superputeri: ["zbor","invizibilitate","super-viteză","telepatie","teleportare","super-forță","controlul focului","controlul apei","controlul aerului","controlul pământului","regenerare","vedere nocturnă","îngheț","elasticitate","control electric","super-sărituri","levitație","vindecare"],
+    Marci: ["Apple","Samsung","Nike","Adidas","BMW","Mercedes","Audi","Sony","LG","Dell","HP","Coca-Cola","Pepsi","Ford","Toyota","Honda","Tesla","Google","Microsoft","Amazon","Ikea","Zara"],
+    Jocuri: ["Minecraft","GTA","CS:GO","LoL","Fortnite","Valorant","FIFA","Rocket League","Call of Duty","Among Us","Roblox","Dota 2","Brawl Stars","Clash Royale","Need for Speed","PUBG"]
   };
 
+  // --- FUNCTII SESSION STORAGE ---
   if (!sessionStorage.getItem('usedWords')) sessionStorage.setItem('usedWords', JSON.stringify([]));
   if (!sessionStorage.getItem('selectedCategories')) sessionStorage.setItem('selectedCategories', JSON.stringify([]));
 
@@ -34,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function getSelectedCategories() { return JSON.parse(sessionStorage.getItem('selectedCategories')); }
   function setSelectedCategories(arr) { sessionStorage.setItem('selectedCategories', JSON.stringify(arr)); }
 
+  // --- FUNCTII MODAL ---
   function renderPlayers() {
     modalBody.innerHTML = '';
     const ul = document.createElement('ul');
@@ -49,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         players.splice(index, 1);
         renderPlayers();
         updatePlayerCount();
-        updateImpostorCount();
+        updateImpostorCount(); 
       });
       li.appendChild(delBtn);
       ul.appendChild(li);
@@ -65,94 +107,114 @@ document.addEventListener('DOMContentLoaded', () => {
     const addBtn = document.createElement('button');
     addBtn.textContent = 'Add Player';
     addBtn.classList.add('add-player-btn');
-    addBtn.addEventListener('click', () => {
+    
+    const addPlayerAction = () => {
       const name = input.value.trim();
       if (name !== '') {
         players.push(name);
         input.value = '';
         renderPlayers();
         updatePlayerCount();
-        updateImpostorCount();
+        updateImpostorCount(); 
+        input.focus();
       }
+    };
+    
+    addBtn.addEventListener('click', addPlayerAction);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addPlayerAction();
     });
+
     addSection.appendChild(input);
     addSection.appendChild(addBtn);
     modalBody.appendChild(addSection);
   }
 
-function renderImpostors() {
-  modalBody.innerHTML = '';
+  function renderImpostors() {
+    modalBody.innerHTML = '';
+    const title = document.createElement('h2');
+    title.textContent = 'Setează numărul de impostori';
+    modalBody.appendChild(title);
 
-  const title = document.createElement('h2');
-  title.textContent = 'Setează numărul de impostori';
-  modalBody.appendChild(title);
+    const info = document.createElement('p');
+    info.textContent = `Număr jucători: ${players.length}`;
+    info.classList.add('impostor-info');
+    modalBody.appendChild(info);
 
-  const info = document.createElement('p');
-  info.textContent = `Număr jucători: ${players.length}`;
-  info.classList.add('impostor-info');
-  modalBody.appendChild(info);
+    const impostorDisplay = document.createElement('h3');
+    impostorDisplay.textContent = `Impostori actuali: ${impostors}`;
+    impostorDisplay.classList.add('impostor-display');
+    modalBody.appendChild(impostorDisplay);
 
-  const impostorDisplay = document.createElement('h3');
-  impostorDisplay.textContent = `Impostori actuali: ${impostors}`;
-  impostorDisplay.classList.add('impostor-display');
-  modalBody.appendChild(impostorDisplay);
+    const warningText = document.createElement('p');
+    warningText.classList.add('warning-text');
+    warningText.style.height = '1.5em';
+    modalBody.appendChild(warningText);
 
-  const warningText = document.createElement('p');
-  warningText.classList.add('warning-text');
-  warningText.style.color = 'red';
-  warningText.style.height = '1.5em'; // să păstreze spațiul chiar și când e gol
-  modalBody.appendChild(warningText);
-
-  const buttonsDiv = document.createElement('div');
-  buttonsDiv.classList.add('impostor-buttons');
-
-  const minusBtn = document.createElement('button');
-  minusBtn.textContent = '−';
-  minusBtn.classList.add('impostor-btn');
-
-  const plusBtn = document.createElement('button');
-  plusBtn.textContent = '+';
-  plusBtn.classList.add('impostor-btn');
-
-  buttonsDiv.appendChild(minusBtn);
-  buttonsDiv.appendChild(plusBtn);
-  modalBody.appendChild(buttonsDiv);
-
-  // 🔢 Limită maximă impostori
-  let maxImpostors = 1;
-  if (players.length >= 5 && players.length <= 7) maxImpostors = 2;
-  else if (players.length >= 8 && players.length <= 10) maxImpostors = 3;
-  else if (players.length >= 11 && players.length <= 13) maxImpostors = 4;
-  else if (players.length >= 14) maxImpostors = 5;
-
-  plusBtn.onclick = () => {
-    if (impostors < maxImpostors) {
-      impostors++;
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.classList.add('impostor-buttons');
+    const minusBtn = document.createElement('button');
+    minusBtn.textContent = '−';
+    minusBtn.classList.add('impostor-btn');
+    const plusBtn = document.createElement('button');
+    plusBtn.textContent = '+';
+    plusBtn.classList.add('impostor-btn');
+    buttonsDiv.appendChild(minusBtn);
+    buttonsDiv.appendChild(plusBtn);
+    modalBody.appendChild(buttonsDiv);
+    
+    let maxImpostors = 1;
+    if (players.length >= 5 && players.length <= 7) maxImpostors = 2;
+    else if (players.length >= 8 && players.length <= 10) maxImpostors = 3;
+    else if (players.length >= 11 && players.length <= 13) maxImpostors = 4;
+    else if (players.length >= 14) maxImpostors = 5;
+    
+    if (impostors > maxImpostors) {
+      impostors = maxImpostors;
       impostorDisplay.textContent = `Impostori actuali: ${impostors}`;
       updateImpostorCount();
-      warningText.textContent = ''; // șterge warning-ul
-    } else {
-      warningText.textContent = `La ${players.length} jucători, maxim ${maxImpostors} impostor(i)!`;
     }
-  };
 
-  minusBtn.onclick = () => {
-    if (impostors > 1) {
-      impostors--;
-      impostorDisplay.textContent = `Impostori actuali: ${impostors}`;
-      updateImpostorCount();
-      warningText.textContent = '';
-    }
-  };
-}
+    plusBtn.onclick = () => {
+      if (impostors < maxImpostors) {
+        impostors++;
+        impostorDisplay.textContent = `Impostori actuali: ${impostors}`;
+        updateImpostorCount();
+        warningText.textContent = '';
+      } else {
+        warningText.textContent = `La ${players.length} jucători, maxim ${maxImpostors} impostor(i)!`;
+      }
+    };
+
+    minusBtn.onclick = () => {
+      if (impostors > 1) {
+        impostors--;
+        impostorDisplay.textContent = `Impostori actuali: ${impostors}`;
+        updateImpostorCount();
+        warningText.textContent = '';
+      }
+    };
+  }
 
   function updatePlayerCount() { playerCountSpan.textContent = players.length; }
-  function updateImpostorCount() { impostorCountSpan.textContent = impostors; }
+  
+  function updateImpostorCount() {
+    let maxImpostors = 1;
+    if (players.length >= 5 && players.length <= 7) maxImpostors = 2;
+    else if (players.length >= 8 && players.length <= 10) maxImpostors = 3;
+    else if (players.length >= 11 && players.length <= 13) maxImpostors = 4;
+    else if (players.length >= 14) maxImpostors = 5;
+
+    if (impostors > maxImpostors) {
+      impostors = maxImpostors;
+    }
+    impostorCountSpan.textContent = impostors;
+  }
+
 
   updatePlayerCount();
-  updateImpostorCount();
+  updateImpostorCount(); 
 
-  // --- RENDER CATEGORII ---
   function renderCategories() {
     modalBody.innerHTML = '';
     const h = document.createElement('h2');
@@ -161,6 +223,7 @@ function renderImpostors() {
 
     const grid = document.createElement('div');
     grid.classList.add('category-list');
+    const currentSelected = getSelectedCategories();
 
     Object.keys(database).forEach(cat => {
       const item = document.createElement('div');
@@ -170,25 +233,18 @@ function renderImpostors() {
       cb.type = 'checkbox';
       cb.value = cat;
       cb.id = "cat-" + cat;
-      if (getSelectedCategories().includes(cat)) cb.checked = true;
+      if (currentSelected.includes(cat)) cb.checked = true;
 
       const label = document.createElement('label');
       label.textContent = cat;
       label.htmlFor = cb.id;
 
-      // Click pe div sau label selectează checkbox
       item.addEventListener('click', e => {
         if (e.target.tagName !== 'INPUT') cb.checked = !cb.checked;
-        const selected = [...document.querySelectorAll('.cat-item input:checked')].map(i => i.value);
-        setSelectedCategories(selected);
+        updateSelectedCategories();
       });
-
-      label.addEventListener('click', e => {
-        e.preventDefault();
-        cb.checked = !cb.checked;
-        const selected = [...document.querySelectorAll('.cat-item input:checked')].map(i => i.value);
-        setSelectedCategories(selected);
-      });
+      
+      cb.addEventListener('change', updateSelectedCategories);
 
       item.appendChild(cb);
       item.appendChild(label);
@@ -197,6 +253,151 @@ function renderImpostors() {
 
     modalBody.appendChild(grid);
   }
+  
+  function updateSelectedCategories() {
+    const selected = [...document.querySelectorAll('.cat-item input:checked')].map(i => i.value);
+    setSelectedCategories(selected);
+  }
+  
+  // --- LOGICA JOC ---
+  
+  function setupGame() {
+    // Resetam contorul
+    viewedPlayerCount = 0; 
+    
+    const selectedCategories = getSelectedCategories();
+    
+    // 1. Alege Categoria
+    currentGameCategory = selectedCategories[Math.floor(Math.random() * selectedCategories.length)];
+    
+    // 2. Alege Cuvantul
+    const wordList = database[currentGameCategory];
+    const usedWords = getUsedWords();
+    let availableWords = wordList.filter(word => !usedWords.includes(word));
+    
+    if (availableWords.length === 0) {
+      availableWords = wordList;
+      sessionStorage.setItem('usedWords', JSON.stringify([])); 
+    }
+    
+    currentGameWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+    addUsedWord(currentGameWord); 
+    
+    // 3. Asigneaza Roluri
+    currentGamePlayers = players.map(name => ({ name: name, role: 'normal' }));
+    
+    let impostorsToAssign = impostors;
+    while (impostorsToAssign > 0) {
+      let randIndex = Math.floor(Math.random() * currentGamePlayers.length);
+      
+      if (currentGamePlayers[randIndex].role === 'normal') {
+        currentGamePlayers[randIndex].role = 'impostor';
+        impostorsToAssign--;
+      }
+    }
+    console.log("Joc Setup:", currentGamePlayers, currentGameWord, currentGameCategory); 
+  }
+
+  // --- HANDLERE PAGINA DE JOC ---
+  
+  function handlePlayerBoxClick(e) {
+    const box = e.currentTarget;
+    if (box.classList.contains('viewed')) return;
+
+    activePlayerBox = box; 
+    const playerIndex = box.dataset.playerIndex;
+    const playerData = currentGamePlayers[playerIndex];
+
+    revealPlayerName.textContent = `Cuvant pentru ${playerData.name}`;
+    revealCategory.textContent = `Categorie: ${currentGameCategory}`;
+    revealBox.dataset.role = playerData.role;
+    revealBox.dataset.word = currentGameWord;
+    revealBox.classList.remove('revealed', 'impostor');
+    revealContent.innerHTML = '';
+    revealPrompt.style.display = 'block'; 
+    revealConfirmBtn.style.display = 'none'; 
+    revealView.classList.add('visible');
+  }
+
+  // Click pe cutia de dezvaluit
+  revealBox.addEventListener('click', () => {
+    if (revealBox.classList.contains('revealed')) return;
+
+    revealBox.classList.add('revealed'); 
+    revealPrompt.style.display = 'none'; 
+    revealConfirmBtn.style.display = 'block'; 
+
+    const role = revealBox.dataset.role;
+    const word = revealBox.dataset.word;
+
+    if (role === 'impostor') {
+      revealBox.classList.add('impostor'); 
+      revealContent.innerHTML = `IMPOSTOR`;
+    } else {
+      revealContent.innerHTML = `${word}`;
+    }
+  });
+
+  // Click pe butonul "Inteles!"
+  revealConfirmBtn.addEventListener('click', () => {
+    revealView.classList.remove('visible'); 
+
+    if (activePlayerBox) {
+      // Verificam daca nu are deja clasa, ca sa contorizam o singura data
+      if (!activePlayerBox.classList.contains('viewed')) {
+        activePlayerBox.classList.add('viewed');
+        viewedPlayerCount++; // Incrementam contorul
+        
+        // Verificam daca toti au vazut
+        if (viewedPlayerCount === currentGamePlayers.length) {
+          // Daca da, aratam ecranul de final
+          showEndGameSummary();
+        }
+      }
+      activePlayerBox = null; 
+    }
+  });
+
+  // --- FUNCTII ECRAN FINAL (NOU) ---
+  function showEndGameSummary() {
+    // 1. Alegem un jucator random
+    const startingPlayer = currentGamePlayers[Math.floor(Math.random() * currentGamePlayers.length)];
+    startingPlayerText.textContent = `${startingPlayer.name} începe runda!`;
+
+    // 2. Resetam starea vizuala a ecranului
+    resultsArea.style.display = 'none';
+    playAgainBtn.style.display = 'none';
+    revealImpostorBtn.style.display = 'block';
+
+    // 3. Afisam ecranul cu animatie
+    endGameView.classList.add('visible');
+  }
+
+  // Listener pentru butonul de dezvaluire
+  revealImpostorBtn.addEventListener('click', () => {
+    // 1. Gasim impostorii
+    const impostorNames = currentGamePlayers
+      .filter(p => p.role === 'impostor')
+      .map(p => p.name);
+
+    // 2. Afisam rezultatele
+    impostorResult.textContent = `Impostor(i): ${impostorNames.join(', ')}`;
+    wordResult.textContent = `Cuvântul: ${currentGameWord}`;
+
+    // 3. Aratam/ascundem elementele
+    resultsArea.style.display = 'block';
+    playAgainBtn.style.display = 'block';
+    revealImpostorBtn.style.display = 'none';
+  });
+
+  // Listener pentru "Joaca din nou"
+  playAgainBtn.addEventListener('click', () => {
+    // Ascundem ecranul de final
+    endGameView.classList.remove('visible');
+    // Simulam click pe butonul de back to lobby, care deja contine toata logica de reset
+    backToLobbyBtn.click();
+  });
+
 
   // --- START GAME ---
   startGameBtn.addEventListener("click", () => {
@@ -205,35 +406,73 @@ function renderImpostors() {
       alert("Selectează măcar o categorie!");
       return;
     }
+    
+    if (players.length < 3) {
+      alert("Minim 3 jucători pentru a începe!");
+      return;
+    }
 
+    setupGame();
     modal.style.display = "none";
     gameArea.innerHTML = "";
 
-    players.forEach(player => {
+    currentGamePlayers.forEach((player, index) => {
       const box = document.createElement("div");
       box.classList.add("player-box");
+      box.dataset.playerIndex = index; 
 
       const name = document.createElement("h3");
-      name.textContent = player;
+      name.textContent = player.name; 
 
       const circle = document.createElement("div");
       circle.classList.add("player-circle");
-      circle.textContent = player[0].toUpperCase();
+      circle.textContent = player.name[0].toUpperCase(); 
 
-      box.appendChild(name);
+      const overlay = document.createElement('div');
+      overlay.classList.add('viewed-overlay');
+      overlay.textContent = 'Jucătorul a văzut deja cuvântul';
+      
       box.appendChild(circle);
+      box.appendChild(name);
+      box.appendChild(overlay); 
       gameArea.appendChild(box);
+      
+      box.addEventListener('click', handlePlayerBoxClick);
     });
 
     document.querySelector(".lobby").style.display = "none";
-    startGameBtn.style.display = "none";
+    startSection.style.display = "none"; 
+    backButtonContainer.style.display = "block"; 
   });
 
-  // --- CLICK EVENTS ---
+  // --- CLICK EVENTS LOBBY / MODAL ---
   playersCard.addEventListener('click', () => { renderPlayers(); modal.style.display = 'flex'; });
   impostorCard.addEventListener('click', () => { renderImpostors(); modal.style.display = 'flex'; });
   categoriiCard.addEventListener('click', () => { renderCategories(); modal.style.display = 'flex'; });
 
   closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
   window.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
-});
+
+  // --- LISTENER BUTON BACK TO LOBBY ---
+  backToLobbyBtn.addEventListener('click', () => {
+    // Arata lobby
+    document.querySelector(".lobby").style.display = "flex";
+    startSection.style.display = "flex";
+
+    // Ascunde joc
+    gameArea.innerHTML = ""; 
+    backButtonContainer.style.display = "none";
+
+    // Ascunde ferestrele (daca sunt deschise)
+    revealView.classList.remove('visible');
+    endGameView.classList.remove('visible'); // Adaugat reset si pentru ecranul final
+
+    // Reseteaza variabilele de joc
+    currentGamePlayers = [];
+    currentGameWord = '';
+    currentGameCategory = '';
+    activePlayerBox = null;
+    viewedPlayerCount = 0; // Adaugat reset contor
+  });
+
+}); // Sfarsitul DOMContentLoaded

@@ -37,6 +37,12 @@
   <button id="startGameBtn" class="start-game-btn">START GAME</button>
 </div>
 
+
+<div id="backButtonContainer" class="back-button-container">
+	<button id="backToLobbyBtn" class="back-to-lobby-btn">&larr;</button>
+</div>
+
+
 <div id="gameArea" class="game-area"></div>
 
 		<div id="modal" class="modal">
@@ -48,9 +54,42 @@
 		</div>
 
 
-  	</main>
+<div id="modal" class="modal">
+</div>
+
+		<div id="revealView" class="reveal-view">
+			<div class="reveal-content-wrapper">
+				<h2 id="revealPlayerName">Cuvant pentru...</h2>
+				<p id="revealCategory">Categorie: ...</p>
+				
+				<div id="revealBox" class="reveal-box">
+					<div class="reveal-shimmer"></div>
+					<div id="revealContent"></div>
+				</div>
+				
+				<p id="revealPrompt">atinge pentru a dezvalui</p>
+				
+				<button id="revealConfirmBtn" class="reveal-confirm-btn">Înțeles!</button>
+			</div>
+		</div>
+
+			<div id="endGameView" class="end-game-view">
+			<div class="end-game-content">
+				<h2 id="startingPlayerText">... începe runda!</h2>
+				
+				<button id="revealImpostorBtn" class="end-game-btn">Dezvăluie Impostorul</button>
+
+				<div id="resultsArea" class="results-area">
+					<h3 id="impostorResult">Impostor(i): ...</h3>
+					<p id="wordResult">Cuvântul: ...</p>
+				</div>
+
+				<button id="playAgainBtn" class="end-game-btn">Joacă din nou</button>
+			</div>
+		</div>
+
+
+		  	</main>
 <script src="script.js"></script>
 </body>
-
-
 </html>
