@@ -621,3 +621,61 @@ body {
   background-color: #007bff;
   display: none; /* Ascuns initial */
 }
+
+/* --- MEDIA QUERIES PENTRU MOBIL --- */
+
+@media (max-width: 600px) {
+
+  /* Ajustam marginile pentru lobby */
+  .lobby {
+    margin: 20px 15px;
+    gap: 20px;
+  }
+
+  /* Fortam cardurile sa fie 100% latime (unul sub altul) */
+  .lobby_cards {
+    flex: 1 1 100%;
+  }
+
+  .lobby_cards h1 {
+    font-size: 24px;
+  }
+
+  /* Butonul de back sa fie aliniat cu noile margini */
+  .back-button-container {
+    margin: 20px 0 0 15px;
+  }
+
+  /* Facem Game Area sa aiba o singura coloana */
+  .game-area {
+    grid-template-columns: 1fr; /* O singura coloana */
+    gap: 40px;
+    margin: 30px 15px;
+  }
+
+  .player-box {
+    /* Centram cutia in grid */
+    justify-self: center; 
+    /* O lasam sa-si pastreze marimea, dar ne asiguram ca nu e mai lata
+       decat ecranul (minus marginile) */
+    width: 100%;
+    max-width: 250px; 
+    height: 250px; /* Pastram inaltimea fixa */
+  }
+
+  /* Ajustam putin modalul sa nu fie lipit de margini */
+  .modal-content {
+    width: 90%;
+  }
+
+  /* Ajustam pagina de reveal */
+  .reveal-box {
+    width: 90%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .end-game-content h2 {
+    font-size: 28px;
+  }
+}
