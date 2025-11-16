@@ -544,4 +544,16 @@ activePlayerBox = null;
 viewedPlayerCount = 0;
 });
 
+document.addEventListener('touchmove', (e) => {
+ // Blocheaza zoom-ul daca sunt detectate mai multe degete
+ if (e.touches.length > 1) {
+ e.preventDefault();
+ }
+}, { passive: false }); // 'passive: false' este necesar pentru ca preventDefault() sa functioneze
+
+// Blocheaza gesturile de zoom (specific iOS/Safari)
+document.addEventListener('gesturestart', (e) => {
+ e.preventDefault();
+});
+
 }); // Sfarsitul DOMContentLoaded
