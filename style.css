@@ -301,6 +301,8 @@ body {
     gap: 70px; /* distanță constantă pe rând și coloană */
     justify-content: center;
     margin: 50px;
+
+
 }
 
 .player-box {
@@ -359,10 +361,10 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  /* Incepe in afara ecranului, in dreapta */
   transform: translateX(100%);
-  transition: transform 0.4s ease-in-out;
+  transition: transform 0.8s ease-in-out;
   visibility: hidden;
+  overflow: hidden;
 }
 
 .reveal-view.visible {
@@ -374,6 +376,9 @@ body {
 .reveal-content-wrapper {
   color: #eee;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .reveal-content-wrapper h2 {
@@ -402,35 +407,36 @@ body {
   transition: border-color 0.3s ease;
 }
 
-/* Animatie de stralucire (in loc de particule, e mai curat) */
-.reveal-shimmer {
-  content: '';
+/* --- ANIMATIE PARTICULE (NOU) --- */
+.particle {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  /* Animatia ruleaza doar cand cutia nu e dezvaluita */
-  animation: shimmer 3s infinite linear;
-  transition: opacity 0.3s ease;
-}
-
-.reveal-box.revealed .reveal-shimmer {
-  /* Oprim animatia si o facem sa dispara */
-  animation: none;
   opacity: 0;
+  animation: floatParticle 15s ease-out forwards;
+  z-index: 0; 
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+/* Asiguram ca textul sta deasupra particulelor */
+#revealContent {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes floatParticle {
+  0% {
+    /* Incepe la pozitia data de JS, opacitate 1 */
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    /* Plutim in sus 100px, ne micsoram si disparem */
+    transform: translateY(-100px) scale(0);
+    opacity: 0;
+  }
 }
 
 #revealContent {
   font-size: 36px;
   font-weight: bold;
-  /* Initial ascuns */
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -458,9 +464,7 @@ body {
 }
 
 .reveal-confirm-btn {
-  display: none; /* Ascuns initial */
-  margin-left: 90px;
-  margin-top: 30px;
+  margin-top: 10px;
   padding: 12px 30px;
   font-size: 18px;
   background-color: #2ecc71;
@@ -523,7 +527,7 @@ body {
   background-color: #555;
   color: white;
   border: none;
-  padding: 40px 80px;
+  padding: 0px 10px 5px 10px;
   border-radius: 8px;
   font-size: 40px;
   font-weight: bold;
@@ -552,6 +556,7 @@ body {
   transform: translateY(100%);
   transition: transform 0.8s ease-in-out;
   visibility: hidden;
+  overflow: hidden;
 }
 
 .end-game-view.visible {
@@ -626,13 +631,11 @@ body {
 
 @media (max-width: 600px) {
 
-  /* Ajustam marginile pentru lobby */
   .lobby {
     margin: 20px 15px;
     gap: 20px;
   }
 
-  /* Fortam cardurile sa fie 100% latime (unul sub altul) */
   .lobby_cards {
     flex: 1 1 100%;
   }
@@ -641,7 +644,6 @@ body {
     font-size: 24px;
   }
 
-  /* Butonul de back sa fie aliniat cu noile margini */
   .back-button-container {
     margin: 20px 0 0 15px;
   }
@@ -654,21 +656,16 @@ body {
   }
 
   .player-box {
-    /* Centram cutia in grid */
     justify-self: center; 
-    /* O lasam sa-si pastreze marimea, dar ne asiguram ca nu e mai lata
-       decat ecranul (minus marginile) */
     width: 100%;
     max-width: 250px; 
-    height: 250px; /* Pastram inaltimea fixa */
+    height: 250px;
   }
 
-  /* Ajustam putin modalul sa nu fie lipit de margini */
   .modal-content {
     width: 90%;
   }
 
-  /* Ajustam pagina de reveal */
   .reveal-box {
     width: 90%;
     max-width: 300px;
@@ -678,4 +675,8 @@ body {
   .end-game-content h2 {
     font-size: 28px;
   }
+}
+
+body.modal-open {
+  overflow: hidden;
 }
