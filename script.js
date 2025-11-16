@@ -544,6 +544,7 @@ activePlayerBox = null;
 viewedPlayerCount = 0;
 });
 
+// #### COD NOU PENTRU BLOCARE PINCH-TO-ZOOM ####
 document.addEventListener('touchmove', (e) => {
  // Blocheaza zoom-ul daca sunt detectate mai multe degete
  if (e.touches.length > 1) {
@@ -555,5 +556,6 @@ document.addEventListener('touchmove', (e) => {
 document.addEventListener('gesturestart', (e) => {
  e.preventDefault();
 });
+// #### SFARSIT COD NOU ####
 
 }); // Sfarsitul DOMContentLoaded

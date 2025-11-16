@@ -365,6 +365,7 @@ body {
   transition: transform 0.8s ease-in-out;
   visibility: hidden;
   overflow: hidden;
+  touch-action: none;
 }
 
 .reveal-view.visible {
@@ -557,6 +558,7 @@ body {
   transition: transform 0.8s ease-in-out;
   visibility: hidden;
   overflow: hidden;
+  touch-action: none;
 }
 
 .end-game-view.visible {
